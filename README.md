@@ -20,7 +20,7 @@ before, uses simple, standard econometrics, and is planned in advance (pre-regis
 
 | Phase | Status |
 |---|---|
-| P0 · Literature and data audit | ⏳ next |
+| P0 · Literature and data audit | 🟡 done, awaiting review: [00_literature_and_audit](q0_boom_catalogue/notebooks/00_literature_and_audit.ipynb) |
 | P1 · Pre-registration | — |
 | P2 · Panel | — |
 | P3 · Blind coding check | — |
@@ -47,5 +47,5 @@ git config core.hooksPath .githooks         # blocks accidental commits of licen
 ## Data and licences
 
 Public sources: IMF Financial Access Survey, World Bank, e-Conomy SEA reports. Euromonitor Passport and Orbis are
-used under a UCL licence. Their data are not included in this repository, and notebooks that use them are published
-without outputs.
+used under a UCL licence. Their data are not included in this repository. Notebooks that display licensed values are
+published without outputs; notebooks that only read licensed files for coverage (years, counts) keep their outputs.
