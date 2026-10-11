@@ -1,0 +1,14 @@
+# UCL-licensed data (Euromonitor Passport, Orbis): never committed, raw or derived
+data/licensed/
+*.xls
+*.xlsx
+
+# Re-fetchable public downloads (processed outputs are committed)
+data/public/raw/
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+logs/*.log

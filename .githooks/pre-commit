@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Block any staged file from the licensed-data folder or any Excel export (UCL licence).
+bad=$(git diff --cached --name-only | grep -E '^data/licensed/|\.xlsx?$' || true)
+if [ -n "$bad" ]; then
+  echo "BLOCKED: licensed data staged for commit:"; echo "$bad"; exit 1
+fi
