@@ -184,6 +184,7 @@ Passport) are coded by hand, without knowing the country or sector, then compare
 | 2026-10-12 | P0 review: monthly data cannot substitute for annual data in takeoff dating (36 months = 3 annual totals); monthly series feed the break and bubble tests only |
 | 2026-10-12 | Digital remittances dropped: no SEA digital-remittance volume series exists and Findex has only 2–3 waves; 10 sectors remain |
 | 2026-10-12 | Passport export received (online ordering 2011+, booking online 2012+ incl. modelled KHM/LAO/MMR, video games 2011+, e-commerce in proximity location 2014+); 2026 forecasts excluded |
+| 2026-10-12 | Second Passport export (Retail and Digital Shopper systems) replaces the definition problems: e-commerce = Retail E-Commerce (9 countries, 2011+); ride-hailing = Mobility E-Commerce (4 countries, 2014+); online media = Video Games Software + Streaming Services E-Commerce. Digital Shopper series for food, travel and bill payments become cross-checks |
 
 ---
 

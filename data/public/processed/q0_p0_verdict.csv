@@ -1,9 +1,9 @@
 sector,label,countries_any_data,takeoff_testable,break_testable,bubble_testable,verdict
-ecommerce,E-commerce,6,4,0,0,NARROW
-ride_hailing,Ride-hailing,6,0,0,0,NOT TESTABLE YET
+ecommerce,E-commerce,9,9,9,0,GO
+ride_hailing,Ride-hailing,4,4,0,0,NARROW
 food_delivery,Food delivery,6,6,2,0,GO
 online_travel,Online travel,9,9,0,0,GO
-online_media,Online media,6,5,5,0,GO
+online_media,Online media,5,5,5,0,GO
 digital_payments,Digital payments / e-wallets,8,4,3,0,NARROW
 digital_banking,Digital banking,8,5,1,0,GO
 digital_lending,Digital lending / BNPL,1,0,1,1,NARROW

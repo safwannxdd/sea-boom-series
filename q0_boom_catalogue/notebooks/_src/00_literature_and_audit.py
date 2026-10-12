@@ -67,18 +67,18 @@ reg[["sector", "source", "countries", "frequency", "start", "end", "access", "p0
 
 # %%
 rows = []
-def add(sector, iso3, source, freq, s, metric):
+def add(sector, iso3, source, freq, s, metric, role="primary"):
     """s: pandas Series indexed by period (int year, or Timestamp for monthly), non-zero values only."""
     s = s.dropna()
     s = s[s > 0]
     if s.empty:
         return
     if freq == "monthly":
-        rows.append(dict(sector=sector, iso3=iso3, source=source, metric=metric, freq=freq,
+        rows.append(dict(sector=sector, iso3=iso3, source=source, metric=metric, role=role, freq=freq,
                          first=s.index.min().year, last=s.index.max().year, n_annual=s.index.year.nunique(),
                          n_monthly=len(s)))
     else:
-        rows.append(dict(sector=sector, iso3=iso3, source=source, metric=metric, freq=freq,
+        rows.append(dict(sector=sector, iso3=iso3, source=source, metric=metric, role=role, freq=freq,
                          first=int(s.index.min()), last=int(s.index.max()), n_annual=len(s), n_monthly=0))
 
 # --- IMF FAS: digital payments (mobile money) and digital banking (mobile/internet banking)
@@ -99,28 +99,41 @@ ec_map = {"ecommerce": ["ecommerce"], "transport_food": ["ride_hailing", "food_d
 for (iso3, sec), g in ec.groupby(["iso3", "sector"]):
     for sector in ec_map[sec]:
         add(sector, iso3, "e-Conomy SEA" + (" (transport+food combined)" if sec == "transport_food" else ""),
-            "annual", g.set_index("year").gmv_usd_b.sort_index(), "gmv_usd_b")
+            "annual", g.set_index("year").gmv_usd_b.sort_index(), "gmv_usd_b", "cross-check")
 
-# --- Euromonitor Passport (licensed): coverage only. Several exports; for a repeated country × category the newest
-# export wins. Years after 2025 are Euromonitor forecasts and are excluded.
-PASSPORT_SECTOR = {"Consumer Foodservice Online Ordering": "food_delivery",
-                   "Booking Online": "online_travel",                     # travel booked via online platforms
-                   "Booking Online - modelled": "online_travel",          # Euromonitor-modelled (KHM, LAO, MMR)
-                   "Video Games": "online_media",                         # check: may include physical games
-                   "E-Commerce in Proximity Location by Industry": "ecommerce"}  # check: may be a sub-segment
+# --- Euromonitor Passport (licensed): coverage only. Several exports; for a repeated series the newest export wins.
+# Years after 2025 are Euromonitor forecasts and are excluded.
+# Key = (category, data type): "Retail E-Commerce" appears twice, once from the Retail system (excl. sales tax, 2011+,
+# 9 countries) and once from the Digital Shopper system (incl. tax, 2014+, 4 countries).
+PASSPORT_SECTOR = {
+    ("Retail E-Commerce", "Retail Value RSP excl Sales Tax"): ("ecommerce", "primary"),
+    ("Retail E-Commerce", "Retail Value RSP"):                ("ecommerce", "cross-check"),
+    ("Mobility E-Commerce", "Retail Value RSP"):              ("ride_hailing", "primary"),     # check scope: mobility
+    ("Consumer Foodservice Online Ordering", "Foodservice Value RSP"): ("food_delivery", "primary"),
+    ("Foodservice E-Commerce", "Retail Value RSP"):           ("food_delivery", "cross-check"),
+    ("Booking Online", "Retail Value RSP"):                   ("online_travel", "primary"),    # travel booked online
+    ("Booking Online - modelled", "Retail Value RSP"):        ("online_travel", "primary"),    # modelled: KHM LAO MMR
+    ("Travel E-Commerce", "Retail Value RSP"):                ("online_travel", "cross-check"),
+    ("Video Games Software", "Retail Value RSP"):             ("online_media", "primary"),     # gaming
+    ("Streaming Services E-Commerce", "Retail Value RSP"):    ("online_media", "primary"),     # video and music
+    ("Bill Payments E-Commerce", "Retail Value RSP"):         ("digital_payments", "cross-check"),
+}
 iso_of = {v[0]: k for k, v in COUNTRIES.items()}
 pp_series = {}
 for f in sorted((LICENSED / "passport").glob("*.xls")):                   # file names sort by export date
     pp = pd.read_excel(f, header=None, engine="xlrd")
-    h = next(i for i in range(15) if str(pp.iloc[i, 0]).strip() == "Geography")
+    h = next(i for i in range(20) if str(pp.iloc[i, 0]).strip() == "Geography")
     hdr = pp.iloc[h].tolist()
     ycols = {i: int(float(v)) for i, v in enumerate(hdr) if str(v).replace(".0", "").isdigit()}
     for _, r in pp.iloc[h + 1:].iterrows():
-        if r[0] in iso_of and r[1] in PASSPORT_SECTOR:
+        key = (r[1], r[2])
+        if r[0] in iso_of and key in PASSPORT_SECTOR:
             s = pd.Series({y: pd.to_numeric(r[i], errors="coerce") for i, y in ycols.items() if y <= 2025})
-            pp_series[(PASSPORT_SECTOR[r[1]], iso_of[r[0]], r[1])] = s
-for (sector, iso3, cat), s in pp_series.items():
-    add(sector, iso3, "Euromonitor Passport" + (" (modelled)" if "modelled" in cat else ""), "annual", s, cat)
+            pp_series[(iso_of[r[0]], key)] = s
+for (iso3, key), s in pp_series.items():
+    sector, role = PASSPORT_SECTOR[key]
+    add(sector, iso3, "Euromonitor Passport" + (" (modelled)" if "modelled" in key[0] else ""), "annual", s,
+        f"{key[0]} [{key[1]}]", role)
 
 # --- Bank Indonesia SSKI Table 12: P2P lending (annual 2018–2020, monthly from Jan 2021)
 bi = pd.read_excel(RAW / "central_banks" / "IDN" / "bi_sski_tabel_12_p2p_lending.xls", header=None, engine="calamine")
@@ -148,7 +161,8 @@ fx = fetch.fetch_findex()
 fx_map = {"bought_online_with_phone_or_internet_pct": "ecommerce", "made_digital_payment_pct": "digital_payments",
           "received_loan_mobile_pct": "digital_lending", "paid_insurance_regularly_pct": "invest_insure"}
 for (ind, iso3), g in fx[fx.indicator.isin(fx_map)].groupby(["indicator", "iso3"]):
-    add(fx_map[ind], iso3, "World Bank Findex (survey)", "survey", g.set_index("year").value.sort_index(), ind)
+    add(fx_map[ind], iso3, "World Bank Findex (survey)", "survey", g.set_index("year").value.sort_index(), ind,
+        "cross-check")
 
 cov = pd.DataFrame(rows)
 print(f"{len(cov)} candidate series in hand")
@@ -175,16 +189,17 @@ cov["takeoff_ok"] = (cov.freq != "survey") & (cov.n_annual >= 8)
 cov["break_ok"] = ((cov.freq == "annual") & (cov.n_annual >= 15)) | ((cov.freq == "monthly") & (cov.n_monthly >= 48))
 cov["bubble_ok"] = (cov.freq == "monthly") & (cov.n_monthly >= 60)
 cov[cov.freq != "survey"].sort_values(["sector", "iso3"])[
-    ["sector", "iso3", "source", "freq", "first", "last", "n_annual", "n_monthly", "takeoff_ok", "break_ok", "bubble_ok"]
+    ["sector", "iso3", "source", "role", "freq", "first", "last", "n_annual", "n_monthly", "takeoff_ok", "break_ok", "bubble_ok"]
 ].reset_index(drop=True)
 
 # %% [markdown]
 # ## 5 · Coverage map: best series per sector × country
-# Cell value = the most annual observations available for that sector × country from any non-survey source.
+# Cell value = the most annual observations available for that sector × country from any primary source
+# (cross-check series excluded).
 # Green cells (≥ 8) can be dated now; the rest depend on the Passport exports and manual collections in §7.
 
 # %%
-best = (cov[cov.freq != "survey"].groupby(["sector", "iso3"]).n_annual.max()
+best = (cov[(cov.freq != "survey") & (cov.role == "primary")].groupby(["sector", "iso3"]).n_annual.max()
         .unstack().reindex(index=list(SECTORS), columns=list(COUNTRIES)))
 fig, ax = plt.subplots(figsize=(10, 5.5))
 show = best.fillna(0).values
@@ -204,6 +219,7 @@ plt.tight_layout(); plt.savefig(FIG / "p0_coverage_map.png", dpi=150); plt.show(
 
 # %%
 def verdict(g):
+    g = g[g.role == "primary"]                                    # cross-check series do not count towards testability
     n_take = g[g.takeoff_ok].iso3.nunique()
     n_brk = g[g.break_ok].iso3.nunique()
     n_bub = g[g.bubble_ok].iso3.nunique()
@@ -221,18 +237,24 @@ ver
 #
 # | Action | Sectors helped | Who |
 # |---|---|---|
-# | **Passport exports** ✅ received 12 Oct 2026 (online ordering, booking online, video games, e-commerce in proximity location). Open: total e-commerce and digital-only games definitions; ride-hailing if Passport has it | E-commerce, ride-hailing, media | You (UCL login) |
+# | **Passport exports** ✅ received 12 Oct 2026 (two exports, see below) | E-commerce, ride-hailing, food, travel, media | You (UCL login) |
 # | **OJK monthly fintech-lending statistics 2018–2020** (outstanding loans), to extend Bank Indonesia's monthly series back three years | Digital lending (Indonesia) | Me (manual download, one file per month) |
 # | **Thailand SEC digital-asset monthly reports**: confirm start year, then collect | Crypto (Thailand) | Me |
 # | **KSEI monthly investor statistics** (connection refused to scripts; may need a browser) | Investment (Indonesia) | Me, with a browser automation tool if needed |
-# #
+#
 # **Remittances dropped (decision, 12 Oct 2026).** No SEA country publishes digital-remittance volumes, and Findex
 # has only 2–3 survey waves, so the sector could never be tested. 10 sectors remain.
 #
-# **Passport export of 12 Oct 2026: definitions to check before P1.**
-# * *E-Commerce in Proximity Location by Industry* (Payments and Lending) may be a sub-segment rather than total
-#   e-commerce, and Malaysia and Vietnam are missing. A total retail e-commerce series would be safer.
-# * *Video Games* (Toys and Games) probably includes physical games and hardware, so it is not purely digital. A
-#   digital-only sub-category, if Passport has one, would be safer. Vietnam is missing.
+# **Passport series chosen (second export of 12 Oct 2026).**
+# * **E-commerce:** *Retail E-Commerce* from the Retail system (value excl. sales tax), 2011+, 9 countries. It replaces
+#   *E-Commerce in Proximity Location*, which was a sub-segment. The Digital Shopper version (incl. tax, 2014+,
+#   4 countries) is a cross-check.
+# * **Ride-hailing:** *Mobility E-Commerce* (Digital Shopper), 2014+, Indonesia, Philippines, Singapore, Thailand.
+#   "Mobility" may also cover car rental or other transport bought online; its definition is recorded in P1.
+# * **Online media:** *Video Games Software* (no hardware; 2011+, 5 countries) and *Streaming Services E-Commerce*
+#   (video and music, 2014+, 4 countries), kept as two series within the sector.
+# * **Food delivery** and **online travel:** unchanged primaries; Digital Shopper's *Foodservice E-Commerce* and
+#   *Travel E-Commerce* are cross-checks.
+# * **Digital payments:** *Bill Payments E-Commerce* is a cross-check for IMF FAS.
 # * *Booking Online* = travel booked via online platforms. Cambodia, Laos and Myanmar are Euromonitor-modelled.
-# * Ride-hailing is not in the export.
+# * Malaysia and Vietnam are absent from the Digital Shopper system, so ride-hailing and streaming cover 4 countries.
