@@ -143,7 +143,13 @@ mon = {}
 for j in range(3, bi.shape[1]):
     if isinstance(months[j], str) and isinstance(years[j], (int, float)) and not pd.isna(years[j]):
         mon[pd.Timestamp(f"{int(years[j])}-{months[j]}-01")] = pd.to_numeric(loans[j], errors="coerce")
-add("digital_lending", "IDN", "Bank Indonesia SSKI T12", "monthly", pd.Series(mon).sort_index(), "accumulated_p2p_loans")
+add("digital_lending", "IDN", "Bank Indonesia SSKI T12", "monthly", pd.Series(mon).sort_index(), "accumulated_p2p_loans",
+    "cross-check")
+
+# --- OJK fintech-lending statistics: monthly outstanding P2P loans, Dec 2018–Dec 2025 (built by series.regulators;
+# Nov 2020 interpolated, Dec 2020 entered from OJK's year-end PDF). Year-end values give 8 annual observations.
+ojk = pd.read_csv(PROC / "idn_ojk_p2p_outstanding_monthly.csv", parse_dates=["month"]).set_index("month")
+add("digital_lending", "IDN", "OJK fintech-lending statistics", "monthly", ojk.outstanding_idr_bn, "outstanding_p2p_loans")
 
 # --- Crypto: Chainalysis ranks (Project 2) and Orbis new crypto firms (licensed, coverage only)
 ch = pd.read_csv(MANUAL / "chainalysis_ranks.csv")
@@ -238,9 +244,9 @@ ver
 # | Action | Sectors helped | Who |
 # |---|---|---|
 # | **Passport exports** ✅ received 12 Oct 2026 (two exports, see below) | E-commerce, ride-hailing, food, travel, media | You (UCL login) |
-# | **OJK monthly fintech-lending statistics 2018–2020** (outstanding loans), to extend Bank Indonesia's monthly series back three years | Digital lending (Indonesia) | Me (manual download, one file per month) |
-# | **Thailand SEC digital-asset monthly reports**: confirm start year, then collect | Crypto (Thailand) | Me |
-# | **KSEI monthly investor statistics** (connection refused to scripts; may need a browser) | Investment (Indonesia) | Me, with a browser automation tool if needed |
+# | **OJK fintech-lending statistics** ✅ collected 12 Oct 2026: outstanding loans monthly Dec 2018–Dec 2025 (85 months; Nov 2020 interpolated; overlapping files agree within 0.001%) | Digital lending (Indonesia) | Done |
+# | **Thailand SEC digital-asset reports**: published only as infographic images (weekly 2021–Oct 2024, monthly since); the data tab is under maintenance | Crypto (Thailand) | Open: needs reading ~60 images |
+# | **KSEI monthly investor statistics**: file list loads by JavaScript; monthly PDFs from about 2020 | Investment (Indonesia) | Open: needs browser automation |
 #
 # **Remittances dropped (decision, 12 Oct 2026).** No SEA country publishes digital-remittance volumes, and Findex
 # has only 2–3 survey waves, so the sector could never be tested. 10 sectors remain.

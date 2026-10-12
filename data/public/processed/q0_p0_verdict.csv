@@ -6,6 +6,6 @@ online_travel,Online travel,9,9,0,0,GO
 online_media,Online media,5,5,5,0,GO
 digital_payments,Digital payments / e-wallets,8,4,3,0,NARROW
 digital_banking,Digital banking,8,5,1,0,GO
-digital_lending,Digital lending / BNPL,1,0,1,1,NARROW
+digital_lending,Digital lending / BNPL,1,1,1,1,NARROW
 invest_insure,Digital investment & insurance,0,0,0,0,NOT TESTABLE YET
 crypto,Crypto,7,6,6,0,GO
