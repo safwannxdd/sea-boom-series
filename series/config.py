@@ -48,7 +48,7 @@ SECTORS = {
     "digital_payments": dict(label="Digital payments / e-wallets",  gics="Financials",             group="established"),
     "digital_banking":  dict(label="Digital banking",               gics="Financials",             group="established"),
     "digital_lending":  dict(label="Digital lending / BNPL",        gics="Financials",             group="to_build"),
-    "invest_insure":    dict(label="Digital investment & insurance", gics="Financials",            group="to_build"),
+    "invest_insure":    dict(label="Digital investment & insurance", gics="Financials",            group="descriptive"),
     "crypto":           dict(label="Crypto",                        gics="Financials",             group="to_build"),
 }
 

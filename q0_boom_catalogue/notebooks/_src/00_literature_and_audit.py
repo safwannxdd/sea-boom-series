@@ -155,6 +155,10 @@ add("digital_lending", "IDN", "OJK fintech-lending statistics", "monthly", ojk.o
 ch = pd.read_csv(MANUAL / "chainalysis_ranks.csv")
 for iso3, g in ch.groupby("iso3"):
     add("crypto", iso3, "Chainalysis index (rank)", "annual", g.groupby("edition").overall_rank.min(), "rank")
+# Thailand SEC: active crypto trading accounts per month, Nov 2020–Aug 2026, read by hand from the SEC's weekly and
+# monthly infographic reports (source report recorded per month in the CSV)
+tha = pd.read_csv(MANUAL / "tha_sec_digital_asset_monthly.csv", parse_dates=["month"]).set_index("month")
+add("crypto", "THA", "Thailand SEC digital-asset reports", "monthly", tha.active_accounts_k, "active_accounts_k")
 orb = pd.read_parquet(LICENSED / "orbis_firm_formation_PRELIMINARY.parquet")
 for iso3, g in orb[orb.kind == "crypto"].groupby("iso3"):
     # firm formation counts can be zero in early years; coverage = years from first firm to 2025
@@ -235,6 +239,7 @@ def verdict(g):
 ver = cov.groupby("sector").apply(verdict).reindex(list(SECTORS)).fillna(
     dict(countries_any_data=0, takeoff_testable=0, break_testable=0, bubble_testable=0, verdict="NOT TESTABLE YET"))
 ver.insert(0, "label", [SECTORS[s]["label"] for s in ver.index])
+ver.loc[[s for s in ver.index if SECTORS[s]["group"] == "descriptive"], "verdict"] = "DESCRIPTIVE ONLY"
 ver.to_csv(PROC / "q0_p0_verdict.csv")
 ver
 
@@ -245,8 +250,11 @@ ver
 # |---|---|---|
 # | **Passport exports** ✅ received 12 Oct 2026 (two exports, see below) | E-commerce, ride-hailing, food, travel, media | You (UCL login) |
 # | **OJK fintech-lending statistics** ✅ collected 12 Oct 2026: outstanding loans monthly Dec 2018–Dec 2025 (85 months; Nov 2020 interpolated; overlapping files agree within 0.001%) | Digital lending (Indonesia) | Done |
-# | **Thailand SEC digital-asset reports**: published only as infographic images (weekly 2021–Oct 2024, monthly since); the data tab is under maintenance | Crypto (Thailand) | Open: needs reading ~60 images |
-# | **KSEI monthly investor statistics**: file list loads by JavaScript; monthly PDFs from about 2020 | Investment (Indonesia) | Open: needs browser automation |
+# | **Thailand SEC digital-asset reports** ✅ read 12 Oct 2026: active trading accounts and trading value per month, Nov 2020–Aug 2026 (70 months), from 8 weekly and 23 monthly infographics; overlapping months agree or differ by small revisions | Crypto (Thailand) | Done |
+# | **KSEI monthly investor statistics**: not collected (decision 12 Oct 2026). Counts all capital-market investors, not only app-based ones | Investment (Indonesia) | Dropped |
+#
+# **Digital investment & insurance: descriptive only (decision 12 Oct 2026).** Shown with e-Conomy SEA's regional
+# totals (digital wealth AUM, digital insurance premiums, 2023–2025); no statistical tests.
 #
 # **Remittances dropped (decision, 12 Oct 2026).** No SEA country publishes digital-remittance volumes, and Findex
 # has only 2–3 survey waves, so the sector could never be tested. 10 sectors remain.
