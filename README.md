@@ -20,8 +20,8 @@ before, uses simple, standard econometrics, and is planned in advance (pre-regis
 
 | Phase | Status |
 |---|---|
-| P0 · Literature and data audit | 🟡 done, awaiting review: [00_literature_and_audit](q0_boom_catalogue/notebooks/00_literature_and_audit.ipynb) |
-| P1 · Pre-registration | — |
+| P0 · Literature and data audit | ✅ done: [00_literature_and_audit](q0_boom_catalogue/notebooks/00_literature_and_audit.ipynb) |
+| P1 · Pre-registration | ⏸ paused 2026-10-12 (drafted, not frozen) |
 | P2 · Panel | — |
 | P3 · Blind coding check | — |
 | P4 · Catalogue and tests | — |
