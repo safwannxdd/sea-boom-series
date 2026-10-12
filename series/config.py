@@ -48,7 +48,6 @@ SECTORS = {
     "digital_payments": dict(label="Digital payments / e-wallets",  gics="Financials",             group="established"),
     "digital_banking":  dict(label="Digital banking",               gics="Financials",             group="established"),
     "digital_lending":  dict(label="Digital lending / BNPL",        gics="Financials",             group="to_build"),
-    "remittances":      dict(label="Digital remittances",           gics="Financials",             group="to_build"),
     "invest_insure":    dict(label="Digital investment & insurance", gics="Financials",            group="to_build"),
     "crypto":           dict(label="Crypto",                        gics="Financials",             group="to_build"),
 }
@@ -69,12 +68,9 @@ IMF_FAS_INDICATORS = {
 # World Bank Global Findex (survey waves 2011, 2014, 2017, 2021, 2024): cross-checks for the to-build sectors
 FINDEX_INDICATORS = {
     "dig.acc": "digitally_enabled_account_pct",
-    "fh2a": "received_intl_remittances_pct",
-    "fh2": "received_domestic_remittances_pct",
     "fin20": "applied_loan_mobile_pct",
     "fin21": "received_loan_mobile_pct",
     "fin22a_1": "borrowed_mobile_money_provider_pct",
-    "fin29": "received_domestic_remittances_into_account_pct",
     "fin26b": "bought_online_with_phone_or_internet_pct",
     "g20.made": "made_digital_payment_pct",
     "fin19": "paid_insurance_regularly_pct",

@@ -62,16 +62,16 @@ Technology sector or the OECD's narrow ICT sector; all are digitally enabled. *G
 | | Digital payments / e-wallets | Financials | Strong |
 | | Digital banking (mobile and internet) | Financials | Strong |
 | **Data to be built** | Digital lending / BNPL | Financials | Weak → upgrade in P0 |
-| | Digital remittances | Financials | Weak → upgrade in P0 |
 | | Digital investment and insurance | Financials | Weak → upgrade in P0 |
 | | Crypto | Financials | Weak → upgrade in P0 |
 
-**All 11 sectors get the full analysis**: the same definitions, tests, validation and robustness checks. The four
+**All 10 sectors get the full analysis**: the same definitions, tests, validation and robustness checks. The three
 "data to be built" sectors have short or biased public series, so P0 searches for better sources, chiefly **monthly
 regulator statistics**. Twelve observations a year make the break and bubble tests usable on short windows.
 
 **Minimum-data rule (applies to every sector equally):** a test runs on a series only if the series meets that
-test's minimum length (set in P1, e.g. ≥ 8 annual or ≥ 36 monthly observations for takeoff dating). A series that
+test's minimum length (set in P1: ≥ 8 annual observations for takeoff dating; monthly series are used for the break and
+bubble tests, not for takeoff dating). A series that
 falls short is reported as **"not testable"**, not dropped and not forced. This keeps the same standard everywhere,
 so a weak sector cannot pass on weaker evidence.
 
@@ -88,7 +88,6 @@ questions as controls.
 | Payments, banking | IMF Financial Access Survey (FAS) | Central-bank statistics, World Bank Findex | 2004 |
 | Digital lending / BNPL | Regulator statistics, e.g. Indonesia OJK fintech-lending (P2P) data, monthly (to confirm in P0) | e-Conomy SEA, Passport (if covered) | ~2018 |
 | Digital investment and insurance | Regulator statistics: securities-account and digital-insurance data from securities and insurance regulators (to confirm in P0) | e-Conomy SEA | to confirm |
-| Digital remittances | Findex "received remittances via mobile" (2014, 2017, 2021, 2024); World Bank RPW digital-channel costs | World Bank remittance inflows (% GDP), as context | 2011–2014 |
 | Crypto | Exchange trading volumes by fiat currency, regulator registrations (e.g. Thailand SEC, Malaysia SC) | Chainalysis adoption index, Orbis firm formation (UCL licence), Google Trends | to confirm |
 
 **Units:** value as % of GDP, which removes most exchange-rate and inflation effects, plus per capita as a check.
@@ -163,7 +162,7 @@ Passport) are coded by hand, without knowing the country or sector, then compare
 2. **Short series** (about 10 years) give the break and bubble tests low power. They are used only where series are long enough.
 3. **e-Conomy SEA figures are modelled estimates** that are revised. Handled by chain-linking and Passport cross-checks.
 4. **Thin Tier B data.** Expect a descriptive treatment only.
-5. **Data for lending, investment/insurance, remittances and crypto may stay thin** even after P0's search. Regulator
+5. **Data for lending, investment/insurance and crypto may stay thin** even after P0's search. Regulator
    data often cover only some countries (Indonesia, Thailand, Malaysia, Philippines are likeliest). Where the
    minimum-data rule fails, the result is "not testable", stated openly.
 6. **Mixed frequencies** (monthly regulator data, annual Passport/IMF). Takeoff is dated on annual totals so all
@@ -182,6 +181,9 @@ Passport) are coded by hand, without knowing the country or sector, then compare
 | 2026-10-11 | All 11 sectors get the full analysis, same rigour; P0 searches for monthly regulator data for the four weak-data sectors; uniform minimum-data rule ("not testable" where it fails) |
 | 2026-10-11 | Blind coding round agreed for P3 |
 | 2026-10-11 | One repo for the whole series; private GitHub repo during the build, public after a licence check |
+| 2026-10-12 | P0 review: monthly data cannot substitute for annual data in takeoff dating (36 months = 3 annual totals); monthly series feed the break and bubble tests only |
+| 2026-10-12 | Digital remittances dropped: no SEA digital-remittance volume series exists and Findex has only 2–3 waves; 10 sectors remain |
+| 2026-10-12 | Passport export received (online ordering 2011+, booking online 2012+ incl. modelled KHM/LAO/MMR, video games 2011+, e-commerce in proximity location 2014+); 2026 forecasts excluded |
 
 ---
 
