@@ -185,10 +185,10 @@ Passport) are coded by hand, without knowing the country or sector, then compare
 | 2026-10-12 | Digital remittances dropped: no SEA digital-remittance volume series exists and Findex has only 2–3 waves; 10 sectors remain |
 | 2026-10-12 | Passport export received (online ordering 2011+, booking online 2012+ incl. modelled KHM/LAO/MMR, video games 2011+, e-commerce in proximity location 2014+); 2026 forecasts excluded |
 | 2026-10-12 | Second Passport export (Retail and Digital Shopper systems) replaces the definition problems: e-commerce = Retail E-Commerce (9 countries, 2011+); ride-hailing = Mobility E-Commerce (4 countries, 2014+); online media = Video Games Software + Streaming Services E-Commerce. Digital Shopper series for food, travel and bill payments become cross-checks |
-
 | 2026-10-12 | Collections before P1: OJK monthly P2P outstanding loans (Indonesia, Dec 2018–Dec 2025) built; Thailand SEC active crypto accounts and trading value (Nov 2020–Aug 2026) read by hand from 31 infographics; KSEI not collected |
 | 2026-10-12 | Digital investment & insurance kept as descriptive only (e-Conomy SEA regional totals); no statistical tests |
 | 2026-10-12 | Thai crypto: active accounts are the primary measure (same definition in weekly and monthly reports); trading value secondary because weekly (month total) and monthly (daily average) units do not reconcile exactly |
+
 ---
 
 ## References (to be verified in P0)
