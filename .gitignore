@@ -12,3 +12,21 @@ __pycache__/
 .ipynb_checkpoints/
 .DS_Store
 logs/*.log
+
+# Secrets: never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Environments / IDE / OS
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.idea/
+.DS_Store
+*.log
+
